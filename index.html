@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#e4572e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Menu de maman">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>Menu de maman - Recettes et courses</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="preconnect" href="https://images.unsplash.com">
   <style>
@@ -161,10 +167,31 @@
     .ghost { color: var(--ink); background: var(--cream-strong); border: 1px solid var(--line); }
     .danger { color: white; background: var(--red); }
     .tiny-button { min-height: 42px; padding: 9px 12px; font-size: .92rem; color: var(--orange-dark); background: #fff3ea; }
+    .icon-button {
+      width: 42px;
+      min-width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      display: inline-grid;
+      place-items: center;
+      color: var(--soft-ink);
+      background: var(--cream-strong);
+      border: 1px solid var(--line);
+      touch-action: manipulation;
+    }
+    .icon-button svg { width: 20px; height: 20px; }
+    .icon-button.active.favorite { color: white; background: var(--red); border-color: transparent; }
+    .icon-button.active.refused { color: white; background: var(--ink); border-color: transparent; }
+    .icon-button:active, .tiny-button:active { transform: scale(.96); }
+    button:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
     .primary:hover, .secondary:hover, .ghost:hover, .danger:hover, .tiny-button:hover { transform: translateY(-1px); }
 
     .button-row { display: flex; flex-wrap: wrap; gap: 9px; align-items: center; }
     .button-row > button, .button-row > a { flex: 1 1 160px; }
+    .button-row.compact > button, .button-row.compact > a { flex: 0 0 auto; }
 
     .mode-scroller {
       display: flex;
@@ -296,6 +323,11 @@
       min-height: 132px;
       box-shadow: var(--shadow);
     }
+    .recipe-card.favorite { border-color: rgba(214, 69, 69, .42); }
+    .recipe-card.refused {
+      opacity: .68;
+      background: #f5f2ee;
+    }
     .recipe-card .recipe-photo {
       background: linear-gradient(135deg, #fbe1ce, #e9f6ee);
       min-height: 132px;
@@ -323,7 +355,7 @@
       grid-template-columns: 1fr;
       gap: 9px;
     }
-    input[type="search"], select {
+    input[type="search"], input[type="text"], select {
       width: 100%;
       min-height: var(--tap);
       border: 1px solid var(--line);
@@ -333,6 +365,42 @@
       padding: 12px 15px;
       outline: 0;
       font-weight: 800;
+    }
+    .leftover-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+    }
+    .chip-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      min-height: 34px;
+      align-items: center;
+    }
+    .choice-chip {
+      min-height: 34px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      color: var(--green);
+      background: var(--green-soft);
+      font-size: .84rem;
+      font-weight: 900;
+    }
+    .choice-chip.muted { color: var(--soft-ink); background: var(--cream-strong); }
+    .preference-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+    .install-card {
+      border-color: #d5e8d8;
+      background: #f1fbf3;
     }
 
     .shopping-summary {
@@ -665,6 +733,18 @@
         </section>
 
         <section class="panel">
+          <div class="panel-header">
+            <h2>J'ai deja</h2>
+            <button class="tiny-button" type="button" id="clear-leftovers">Vider</button>
+          </div>
+          <div class="leftover-row">
+            <input id="leftover-input" type="text" placeholder="poulet, pates, oeufs">
+            <button class="secondary" type="button" id="save-leftovers"><i data-lucide="package-check"></i>OK</button>
+          </div>
+          <div class="chip-list" id="leftover-chips"></div>
+        </section>
+
+        <section class="panel">
           <div class="panel-header"><h2>Besoin special</h2></div>
           <div class="button-row">
             <button class="ghost" type="button" id="shuffle-today"><i data-lucide="refresh-cw"></i>Changer aujourd'hui</button>
@@ -756,6 +836,13 @@
                 <div class="day-toggle-grid" id="free-days"></div>
               </div>
 
+              <div class="setting-card install-card">
+                <h3>Installation telephone</h3>
+                <div class="button-row">
+                  <button class="secondary" type="button" id="install-app"><i data-lucide="smartphone"></i>Installer</button>
+                </div>
+              </div>
+
               <div class="drive-panel">
                 <h3>Drive Intermarche</h3>
                 <p>Je prepare une liste de mots-cles produit. Pour rester propre legalement, l'ajout au panier se fait ensuite sur le site Intermarche.</p>
@@ -763,15 +850,6 @@
                 <div class="button-row">
                   <button class="secondary" type="button" id="copy-drive"><i data-lucide="clipboard-list"></i>Copier liste Drive</button>
                   <a class="primary" href="https://www.intermarche.com/magasin?pdvref=05669" target="_blank" rel="noopener"><i data-lucide="external-link"></i>Ouvrir Intermarche</a>
-                </div>
-              </div>
-
-              <div class="setting-card">
-                <h3>Autres pages</h3>
-                <div class="button-row">
-                  <a class="ghost" href="atelier-etude.html">Atelier</a>
-                  <a class="ghost" href="cv-lettre.html">CV</a>
-                  <a class="ghost" href="convertisseur-fichiers.html">Convertisseur</a>
                 </div>
               </div>
             </div>
@@ -2616,6 +2694,9 @@
       freeDays: ["Samedi", "Dimanche"],
       plan: {},
       checked: {},
+      favoriteRecipes: [],
+      refusedRecipes: [],
+      leftovers: [],
       view: "week",
       recipeTargetDay: "Lundi",
       recipeTargetSlot: "midi"
@@ -2623,13 +2704,21 @@
     let state = loadState();
     state.view = "week";
     let toastTimer = null;
+    let deferredInstallPrompt = null;
 
     document.addEventListener("DOMContentLoaded", () => {
       document.body.dataset.font = state.font;
       if (!hasValidPlan() || hasSameDayDuplicates()) generatePlan(false);
       bindEvents();
       renderAll();
+      registerPwa();
       createIcons();
+    });
+
+    window.addEventListener("beforeinstallprompt", event => {
+      event.preventDefault();
+      deferredInstallPrompt = event;
+      updateInstallButton();
     });
 
     function bindEvents() {
@@ -2651,6 +2740,12 @@
       document.getElementById("uncheck-all").addEventListener("click", uncheckAll);
       document.getElementById("shuffle-today").addEventListener("click", replaceToday);
       document.getElementById("copy-week").addEventListener("click", copyWeek);
+      document.getElementById("save-leftovers").addEventListener("click", saveLeftoversFromInput);
+      document.getElementById("clear-leftovers").addEventListener("click", clearLeftovers);
+      document.getElementById("leftover-input").addEventListener("keydown", event => {
+        if (event.key === "Enter") saveLeftoversFromInput();
+      });
+      document.getElementById("install-app").addEventListener("click", installApp);
       document.getElementById("servings-select").addEventListener("change", event => {
         state.servings = Number(event.target.value);
         state.checked = {};
@@ -2675,12 +2770,14 @@
       renderRecipeTargets();
       renderFontOptions();
       renderFreeDays();
+      renderLeftovers();
       renderWeek();
       renderToday();
       renderRecipes();
       renderShoppingList();
       renderSettings();
       renderStats();
+      updateInstallButton();
       switchView(state.view || "week", false);
       document.getElementById("active-mode-label").textContent = `Mode ${modeLabel(state.mode).toLowerCase()}`;
     }
@@ -2748,6 +2845,35 @@
           toast("Jours libres mis a jour.");
         });
       });
+    }
+
+    function renderLeftovers() {
+      const input = document.getElementById("leftover-input");
+      const chips = document.getElementById("leftover-chips");
+      const labels = state.leftovers.map(id => getIngredient(id).name);
+      input.value = labels.join(", ");
+      chips.innerHTML = labels.length
+        ? labels.map(label => `<span class="choice-chip"><i data-lucide="package-check"></i>${escapeHtml(label)}</span>`).join("")
+        : `<span class="choice-chip muted">Aucun reste indique</span>`;
+      createIcons();
+    }
+
+    function saveLeftoversFromInput() {
+      const input = document.getElementById("leftover-input");
+      const ids = parseLeftovers(input.value);
+      state.leftovers = ids;
+      saveState();
+      renderLeftovers();
+      generatePlan(true);
+      toast(ids.length ? "Semaine adaptee avec ce qu'il y a deja." : "Restes vides.");
+    }
+
+    function clearLeftovers() {
+      state.leftovers = [];
+      saveState();
+      renderLeftovers();
+      renderRecipes();
+      toast("Restes vides.");
     }
 
     function renderSettings() {
@@ -2837,11 +2963,16 @@
     function renderRecipes() {
       const query = normalize(document.getElementById("recipe-search").value);
       const visible = recipes.filter(recipe => {
-        const textMatch = !query || normalize(`${recipe.title} ${recipe.difficulty} ${recipe.modes.join(" ")}`).includes(query);
+        const ingredientText = recipe.ingredients.map(item => getIngredient(item.id).name).join(" ");
+        const textMatch = !query || normalize(`${recipe.title} ${recipe.difficulty} ${recipe.modes.join(" ")} ${ingredientText}`).includes(query);
         return textMatch;
       });
-      document.getElementById("recipe-grid").innerHTML = visible.map(recipe => `
-        <article class="recipe-card">
+      document.getElementById("recipe-grid").innerHTML = visible.map(recipe => {
+        const favorite = isFavorite(recipe.id);
+        const refused = isRefused(recipe.id);
+        const leftoverCount = leftoverMatchCount(recipe);
+        return `
+        <article class="recipe-card ${favorite ? "favorite" : ""} ${refused ? "refused" : ""}">
           <div class="recipe-photo">${imageTag(recipe.photo, recipe.title)}</div>
           <div class="recipe-info">
             <h3>${escapeHtml(recipe.title)}</h3>
@@ -2849,14 +2980,22 @@
               <span class="tag orange">${recipe.time} min</span>
               <span class="tag green">${escapeHtml(recipe.difficulty)}</span>
               <span class="tag">${recipe.servings} pers.</span>
+              ${favorite ? `<span class="tag orange">Favori</span>` : ""}
+              ${refused ? `<span class="tag">Refusee</span>` : ""}
+              ${leftoverCount ? `<span class="tag green">${leftoverCount} deja</span>` : ""}
             </div>
-            <div class="button-row">
+            <div class="preference-row">
+              <button class="icon-button favorite ${favorite ? "active" : ""}" type="button" data-toggle-favorite="${recipe.id}" aria-pressed="${favorite}" aria-label="${favorite ? "Retirer des favoris" : "Ajouter aux favoris"}"><i data-lucide="heart"></i></button>
+              <button class="icon-button refused ${refused ? "active" : ""}" type="button" data-toggle-refused="${recipe.id}" aria-pressed="${refused}" aria-label="${refused ? "Reautoriser cette recette" : "Je n'aime pas cette recette"}"><i data-lucide="thumbs-down"></i></button>
+            </div>
+            <div class="button-row compact">
               <button class="tiny-button" type="button" data-open-recipe="${recipe.id}">Voir</button>
-              <button class="tiny-button" type="button" data-choose-recipe="${recipe.id}"><i data-lucide="plus"></i>Planning</button>
+              <button class="tiny-button" type="button" data-choose-recipe="${recipe.id}" ${refused ? "disabled" : ""}><i data-lucide="plus"></i>Planning</button>
             </div>
           </div>
         </article>
-      `).join("") || `<div class="empty-state">Aucune recette trouvee.</div>`;
+      `;
+      }).join("") || `<div class="empty-state">Aucune recette trouvee.</div>`;
       bindRecipeCards();
     }
 
@@ -2873,12 +3012,28 @@
           openRecipe(element.dataset.openRecipe);
         });
       });
+      document.querySelectorAll("#recipe-grid [data-toggle-favorite]").forEach(button => {
+        button.addEventListener("click", event => {
+          event.stopPropagation();
+          toggleFavorite(button.dataset.toggleFavorite);
+        });
+      });
+      document.querySelectorAll("#recipe-grid [data-toggle-refused]").forEach(button => {
+        button.addEventListener("click", event => {
+          event.stopPropagation();
+          toggleRefused(button.dataset.toggleRefused);
+        });
+      });
       createIcons();
     }
 
     function chooseRecipeForTarget(recipeId) {
       const recipe = recipes.find(item => item.id === recipeId);
       if (!recipe) return;
+      if (isRefused(recipe.id)) {
+        toast("Cette recette est dans les recettes refusees.");
+        return;
+      }
       state.recipeTargetDay = document.getElementById("recipe-target-day").value || days[0];
       state.recipeTargetSlot = document.getElementById("recipe-target-slot").value || "midi";
       const key = mealKey(state.recipeTargetDay, state.recipeTargetSlot);
@@ -2895,6 +3050,63 @@
       renderShoppingList();
       renderStats();
       toast(`${recipe.title} ajoute pour ${state.recipeTargetDay}.`);
+    }
+
+    function toggleFavorite(recipeId) {
+      const recipe = recipes.find(item => item.id === recipeId);
+      if (!recipe) return;
+      if (isFavorite(recipeId)) {
+        state.favoriteRecipes = state.favoriteRecipes.filter(id => id !== recipeId);
+        toast(`${recipe.title} retire des favoris.`);
+      } else {
+        state.favoriteRecipes = uniqueIds([...state.favoriteRecipes, recipeId]);
+        state.refusedRecipes = state.refusedRecipes.filter(id => id !== recipeId);
+        toast(`${recipe.title} ajoute aux favoris.`);
+      }
+      saveState();
+      renderRecipes();
+      renderOpenRecipeIfNeeded(recipeId);
+    }
+
+    function toggleRefused(recipeId) {
+      const recipe = recipes.find(item => item.id === recipeId);
+      if (!recipe) return;
+      if (isRefused(recipeId)) {
+        state.refusedRecipes = state.refusedRecipes.filter(id => id !== recipeId);
+        toast(`${recipe.title} pourra revenir dans les menus.`);
+      } else {
+        state.refusedRecipes = uniqueIds([...state.refusedRecipes, recipeId]);
+        state.favoriteRecipes = state.favoriteRecipes.filter(id => id !== recipeId);
+        replaceRecipeInPlan(recipeId);
+        toast(`${recipe.title} ne sera plus propose.`);
+      }
+      state.checked = {};
+      saveState();
+      renderWeek();
+      renderToday();
+      renderRecipes();
+      renderShoppingList();
+      renderStats();
+      renderOpenRecipeIfNeeded(recipeId);
+    }
+
+    function replaceRecipeInPlan(recipeId) {
+      Object.entries({ ...state.plan }).forEach(([key, id]) => {
+        if (id !== recipeId) return;
+        const [day, slot] = key.split("-");
+        const sameDayOtherMeals = slots
+          .map(([otherSlot]) => state.plan[mealKey(day, otherSlot)])
+          .filter(otherId => otherId && otherId !== recipeId);
+        const excluded = new Set([recipeId, ...sameDayOtherMeals, ...state.refusedRecipes].filter(Boolean));
+        const { ingredientUse, usedRecipes } = usageFromPlan(key);
+        const next = pickRecipe(day, slot, ingredientUse, usedRecipes, excluded);
+        if (next) state.plan[key] = next.id;
+        else delete state.plan[key];
+      });
+    }
+
+    function renderOpenRecipeIfNeeded(recipeId) {
+      if (document.getElementById("recipe-modal").classList.contains("open")) openRecipe(recipeId);
     }
 
     function renderShoppingList() {
@@ -2976,8 +3188,10 @@
 
     function pickRecipe(day, slot, ingredientUse, usedRecipes, excludeIds = new Set()) {
       const exclusions = excludeIds instanceof Set ? excludeIds : new Set([excludeIds].filter(Boolean));
-      const freshPool = recipes.filter(recipe => recipe.slots.includes(slot) && !exclusions.has(recipe.id) && !usedRecipes.has(recipe.id) && modeAllows(recipe, day));
-      const pool = freshPool.length ? freshPool : recipes.filter(recipe => recipe.slots.includes(slot) && !exclusions.has(recipe.id) && modeAllows(recipe, day));
+      const availableRecipes = recipes.filter(recipe => !isRefused(recipe.id));
+      const source = availableRecipes.length ? availableRecipes : recipes;
+      const freshPool = source.filter(recipe => recipe.slots.includes(slot) && !exclusions.has(recipe.id) && !usedRecipes.has(recipe.id) && modeAllows(recipe, day));
+      const pool = freshPool.length ? freshPool : source.filter(recipe => recipe.slots.includes(slot) && !exclusions.has(recipe.id) && modeAllows(recipe, day));
       const scored = pool.map(recipe => ({ recipe, score: scoreRecipe(recipe, day, ingredientUse, usedRecipes) }))
         .sort((a, b) => b.score - a.score);
       const top = scored.slice(0, 4);
@@ -2987,6 +3201,9 @@
     function scoreRecipe(recipe, day, ingredientUse, usedRecipes) {
       let score = 0;
       if (recipe.modes.includes(state.mode)) score += 30;
+      if (isFavorite(recipe.id)) score += 85;
+      const leftovers = leftoverMatchCount(recipe);
+      if (leftovers) score += 45 + leftovers * 22;
       if (state.mode === "rapide" && recipe.time <= 30) score += 30;
       if (state.mode === "economique" && recipe.cost <= 1) score += 28;
       if (state.mode === "sportif" && recipe.nutrition.protein >= 28) score += 26;
@@ -3066,6 +3283,8 @@
       const recipe = recipes.find(item => item.id === id);
       if (!recipe) return;
       const multiplier = state.servings / recipe.servings;
+      const favorite = isFavorite(recipe.id);
+      const refused = isRefused(recipe.id);
       document.getElementById("recipe-sheet").innerHTML = `
         <div class="sheet-photo">
           ${imageTag(recipe.photo, recipe.title)}
@@ -3075,6 +3294,10 @@
           <div>
             <h1 id="modal-title">${escapeHtml(recipe.title)}</h1>
             <p>${modeLabel(state.mode)} - recette prevue pour ${state.servings} personne${state.servings > 1 ? "s" : ""}.</p>
+            <div class="button-row compact">
+              <button class="tiny-button" type="button" data-modal-favorite="${recipe.id}"><i data-lucide="heart"></i>${favorite ? "Favori" : "Ajouter favori"}</button>
+              <button class="tiny-button" type="button" data-modal-refused="${recipe.id}"><i data-lucide="thumbs-down"></i>${refused ? "Reautoriser" : "Je n'aime pas"}</button>
+            </div>
           </div>
           <div class="info-grid">
             <div class="info-box"><strong>${recipe.time} min</strong><span>Preparation</span></div>
@@ -3106,6 +3329,14 @@
         </div>
       `;
       document.getElementById("recipe-modal").classList.add("open");
+      document.querySelector("[data-modal-favorite]")?.addEventListener("click", event => {
+        event.stopPropagation();
+        toggleFavorite(event.currentTarget.dataset.modalFavorite);
+      });
+      document.querySelector("[data-modal-refused]")?.addEventListener("click", event => {
+        event.stopPropagation();
+        toggleRefused(event.currentTarget.dataset.modalRefused);
+      });
       createIcons();
     }
 
@@ -3268,6 +3499,95 @@
       return items[Math.floor(Math.random() * items.length)];
     }
 
+    function isFavorite(recipeId) {
+      return (state.favoriteRecipes || []).includes(recipeId);
+    }
+
+    function isRefused(recipeId) {
+      return (state.refusedRecipes || []).includes(recipeId);
+    }
+
+    function leftoverMatchCount(recipe) {
+      const leftovers = new Set(state.leftovers || []);
+      if (!leftovers.size) return 0;
+      return recipe.ingredients.filter(item => leftovers.has(item.id)).length;
+    }
+
+    function parseLeftovers(text) {
+      const terms = String(text || "")
+        .split(/[,;\n]+/)
+        .map(normalize)
+        .filter(Boolean);
+      const found = terms.map(matchIngredientTerm).filter(Boolean);
+      return uniqueIds(found);
+    }
+
+    function matchIngredientTerm(term) {
+      const entries = Object.entries(ingredientMeta);
+      const exact = entries.find(([id, meta]) => [id, meta.name, meta.drive].map(normalize).includes(term));
+      if (exact) return exact[0];
+      const loose = entries.find(([id, meta]) => {
+        const labels = [id, meta.name, meta.drive].map(normalize);
+        return labels.some(label => label.includes(term) || term.includes(label));
+      });
+      return loose?.[0] || null;
+    }
+
+    function uniqueIds(ids) {
+      return [...new Set((ids || []).filter(Boolean))];
+    }
+
+    function usageFromPlan(skipKey) {
+      const ingredientUse = new Map();
+      const usedRecipes = new Map();
+      Object.entries(state.plan || {}).forEach(([planKey, id]) => {
+        if (planKey === skipKey || isRefused(id)) return;
+        const recipe = recipes.find(item => item.id === id);
+        if (!recipe) return;
+        usedRecipes.set(id, (usedRecipes.get(id) || 0) + 1);
+        recipe.ingredients.forEach(item => ingredientUse.set(item.id, (ingredientUse.get(item.id) || 0) + 1));
+      });
+      return { ingredientUse, usedRecipes };
+    }
+
+    async function installApp() {
+      if (isStandaloneApp()) {
+        toast("L'appli est deja installee.");
+        return;
+      }
+      if (!deferredInstallPrompt) {
+        toast("Sur iPhone: partager, puis Sur l'ecran d'accueil.");
+        return;
+      }
+      deferredInstallPrompt.prompt();
+      await deferredInstallPrompt.userChoice.catch(() => null);
+      deferredInstallPrompt = null;
+      updateInstallButton();
+      toast("Installation prete.");
+    }
+
+    function updateInstallButton() {
+      const button = document.getElementById("install-app");
+      if (!button) return;
+      if (isStandaloneApp()) {
+        button.disabled = true;
+        button.innerHTML = `<i data-lucide="check"></i>Installee`;
+      } else {
+        button.disabled = false;
+        button.innerHTML = `<i data-lucide="smartphone"></i>Installer`;
+      }
+      createIcons();
+    }
+
+    function isStandaloneApp() {
+      return window.matchMedia?.("(display-mode: standalone)").matches || window.navigator.standalone === true;
+    }
+
+    function registerPwa() {
+      if (!("serviceWorker" in navigator)) return;
+      navigator.serviceWorker.register("service-worker.js").catch(() => {});
+    }
+
     function saveState() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
@@ -3275,7 +3595,17 @@
     function loadState() {
       try {
         const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-        return { ...defaultState, ...saved, checked: saved.checked || {}, plan: saved.plan || {} };
+        const favoriteRecipes = Array.isArray(saved.favoriteRecipes) ? uniqueIds(saved.favoriteRecipes) : [];
+        const refusedRecipes = Array.isArray(saved.refusedRecipes) ? uniqueIds(saved.refusedRecipes) : [];
+        return {
+          ...defaultState,
+          ...saved,
+          checked: saved.checked || {},
+          plan: saved.plan || {},
+          favoriteRecipes: favoriteRecipes.filter(id => recipes.some(recipe => recipe.id === id)),
+          refusedRecipes: refusedRecipes.filter(id => recipes.some(recipe => recipe.id === id)),
+          leftovers: Array.isArray(saved.leftovers) ? uniqueIds(saved.leftovers).filter(id => ingredientMeta[id]) : []
+        };
       } catch {
         return { ...defaultState };
       }
