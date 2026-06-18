@@ -2,6 +2,8 @@
 
 Site cuisine mobile-first pour planifier les repas de la semaine, consulter les recettes et generer la liste de courses.
 
+Version actuelle : v1.
+
 Fonctions incluses :
 - favoris et recettes refusees ;
 - generation avec les ingredients deja disponibles ;
