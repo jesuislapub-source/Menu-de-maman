@@ -2,7 +2,7 @@
 
 Site cuisine mobile-first pour planifier les repas de la semaine, consulter les recettes et generer la liste de courses.
 
-Version actuelle : v1.
+Version actuelle : v2.
 
 Fonctions incluses :
 - favoris et recettes refusees ;
@@ -11,7 +11,7 @@ Fonctions incluses :
 - mode cuisine en plein ecran ;
 - filtres de recettes ;
 - partage et masquage des courses cochees.
-- vignettes recettes locales et uniques ;
+- vraies photos web pour les recettes ;
 - recettes familiales tres simples et rapides.
 
 ## Publication GitHub Pages
