@@ -8,6 +8,10 @@
   <meta name="apple-mobile-web-app-title" content="Menu de maman">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>Menu de maman - Recettes et courses</title>
+  <meta name="description" content="Menu de maman genere les repas de la semaine, les recettes simples et la liste de courses pour la famille.">
+  <meta property="og:title" content="Menu de maman">
+  <meta property="og:description" content="Menus familiaux simples, recettes rapides et liste de courses sauvegardee sur le telephone.">
+  <meta property="og:type" content="website">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   <link rel="preconnect" href="https://unpkg.com">
@@ -118,6 +122,26 @@
       font-size: .78rem;
     }
     .hero p { color: rgba(255,255,255,.88); margin-bottom: 0; max-width: 580px; }
+    .trust-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .trust-chip {
+      min-height: 34px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 10px;
+      color: white;
+      background: rgba(31, 41, 51, .36);
+      border: 1px solid rgba(255, 255, 255, .24);
+      font-size: .84rem;
+      font-weight: 900;
+      backdrop-filter: blur(10px);
+    }
 
     .content {
       display: grid;
@@ -229,7 +253,7 @@
 
     .quick-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
       gap: 10px;
     }
     .mini-stat {
@@ -829,7 +853,12 @@
       <div class="hero-content">
         <div class="eyebrow">Cuisine de la semaine</div>
         <h1>Menu de maman</h1>
-        <p>Des repas simples, une liste de courses claire, et moins de questions a 18h30.</p>
+        <p>Un menu familial complet et les courses pretes en 1 minute. Simple, rapide, sauvegarde sur ce telephone.</p>
+        <div class="trust-row" aria-label="Avantages">
+          <span class="trust-chip"><i data-lucide="clock-3"></i>Recettes rapides</span>
+          <span class="trust-chip"><i data-lucide="shopping-basket"></i>Courses regroupees</span>
+          <span class="trust-chip"><i data-lucide="save"></i>Sauvegarde locale</span>
+        </div>
       </div>
     </header>
 
@@ -851,6 +880,7 @@
           <div class="quick-grid">
             <div class="mini-stat"><strong id="stat-meals">0</strong><span>repas prevus</span></div>
             <div class="mini-stat"><strong id="stat-items">0</strong><span>produits courses</span></div>
+            <div class="mini-stat"><strong id="save-status">OK</strong><span>sauvegarde telephone</span></div>
           </div>
         </section>
 
@@ -983,7 +1013,7 @@
 
               <div class="setting-card install-card">
                 <h3>Installation telephone</h3>
-                <p class="muted-note">Ajoute le site sur l'ecran d'accueil pour l'ouvrir en plein ecran, comme une appli.</p>
+                <p class="muted-note">Android : touche Installer. iPhone : bouton Partager, puis Sur l'ecran d'accueil.</p>
                 <div class="button-row">
                   <button class="secondary" type="button" id="install-app"><i data-lucide="smartphone"></i>Installer</button>
                 </div>
@@ -2834,6 +2864,286 @@
         ingredients: [ing("veau", 800, "g"), ing("carottes", 5, "piece"), ing("poireaux", 2, "piece"), ing("champignons", 300, "g"), ing("creme", 200, "ml"), ing("riz", 320, "g")],
         steps: ["Cuire doucement le veau avec les legumes.", "Ajouter champignons en fin de cuisson.", "Lier la sauce avec la creme.", "Servir avec riz."],
         nutrition: { calories: 700, protein: 52, carbs: 65, fat: 24 }
+      }),
+      recipe({
+        id: "coquillettes-jambon-fromage",
+        title: "Coquillettes jambon fromage",
+        photo: "auto",
+        time: 14,
+        difficulty: "Tres facile",
+        servings: 4,
+        slots: ["midi", "soir"],
+        modes: ["rapide", "economique", "convivial"],
+        cost: 1,
+        ingredients: [ing("pates", 360, "g"), ing("jambon", 180, "g"), ing("fromage_rape", 120, "g"), ing("creme", 120, "ml")],
+        steps: ["Cuire les coquillettes.", "Couper le jambon en petits morceaux.", "Melanger avec creme et fromage.", "Servir tout de suite."],
+        nutrition: { calories: 620, protein: 28, carbs: 82, fat: 20 }
+      }),
+      recipe({
+        id: "riz-oeufs-petits-pois",
+        title: "Riz oeufs petits pois",
+        photo: "auto",
+        time: 18,
+        difficulty: "Tres facile",
+        servings: 4,
+        slots: ["midi", "soir"],
+        modes: ["rapide", "economique", "vegetarien"],
+        cost: 1,
+        ingredients: [ing("riz", 320, "g"), ing("oeufs", 4, "piece"), ing("petits_pois", 250, "g"), ing("sauce_soja", 30, "ml")],
+        steps: ["Cuire le riz.", "Brouiller les oeufs a la poele.", "Ajouter petits pois et riz.", "Assaisonner avec un peu de sauce soja."],
+        nutrition: { calories: 560, protein: 22, carbs: 88, fat: 12 }
+      }),
+      recipe({
+        id: "croque-monsieur-four",
+        title: "Croque monsieur au four",
+        photo: "auto",
+        time: 16,
+        difficulty: "Tres facile",
+        servings: 4,
+        slots: ["midi", "soir"],
+        modes: ["rapide", "economique", "convivial"],
+        cost: 1,
+        ingredients: [ing("pain", 8, "tranche"), ing("jambon", 4, "tranche"), ing("fromage_rape", 160, "g"), ing("creme", 80, "ml"), ing("salade", 120, "g")],
+        steps: ["Monter les croques avec jambon et fromage.", "Ajouter un peu de creme sur le dessus.", "Passer au four jusqu'a gratinage.", "Servir avec salade."],
+        nutrition: { calories: 610, protein: 31, carbs: 52, fat: 30 }
+      }),
+      recipe({
+        id: "wraps-jambon-cheddar",
+        title: "Wraps jambon cheddar",
+        photo: "auto",
+        time: 10,
+        difficulty: "Tres facile",
+        servings: 4,
+        slots: ["midi"],
+        modes: ["rapide", "economique"],
+        cost: 1,
+        ingredients: [ing("tortillas", 4, "piece"), ing("jambon", 4, "tranche"), ing("cheddar", 120, "g"), ing("salade", 100, "g"), ing("tomate", 2, "piece")],
+        steps: ["Garnir les tortillas.", "Ajouter salade et tomate.", "Rouler serre.", "Couper en deux pour servir."],
+        nutrition: { calories: 520, protein: 25, carbs: 50, fat: 24 }
+      }),
+      recipe({
+        id: "omelette-jambon-fromage",
+        title: "Omelette jambon fromage",
+        photo: "auto",
+        time: 12,
+        difficulty: "Tres facile",
+        servings: 4,
+        slots: ["midi", "soir"],
+        modes: ["rapide", "economique", "sportif"],
+        cost: 1,
+        ingredients: [ing("oeufs", 8, "piece"), ing("jambon", 180, "g"), ing("fromage_rape", 100, "g"), ing("salade", 120, "g")],
+        steps: ["Battre les oeufs.", "Ajouter jambon et fromage.", "Cuire doucement a la poele.", "Servir avec salade."],
+        nutrition: { calories: 520, protein: 40, carbs: 8, fat: 35 }
+      }),
+      recipe({
+        id: "quesadillas-poulet-fromage",
+        title: "Quesadillas poulet fromage",
+        photo: "auto",
+        time: 16,
+        difficulty: "Tres facile",
+        servings: 4,
+        slots: ["midi", "soir"],
+        modes: ["rapide", "sportif", "convivial"],
+        cost: 2,
+        ingredients: [ing("tortillas", 4, "piece"), ing("poulet_cuit", 320, "g"), ing("cheddar", 160, "g"), ing("mais", 1, "boite"), ing("tomate", 2, "piece")],
+        steps: ["Garnir les tortillas avec poulet et cheddar.", "Plier en deux.", "Dorer a la poele.", "Servir avec tomate et mais."],
+        nutrition: { calories: 650, protein: 38, carbs: 58, fat: 30 }
+      }),
+      recipe({
+        id: "pizza-baguette-express",
+        title: "Pizza baguette express",
+        photo: "auto",
+        time: 15,
+        difficulty: "Tres facile",
+        servings: 4,
+        slots: ["midi", "soir"],
+        modes: ["rapide", "economique", "convivial"],
+        cost: 1,
+        ingredients: [ing("pain", 8, "tranche"), ing("sauce_tomate", 220, "g"), ing("mozzarella", 180, "g"), ing("jambon", 160, "g")],
+        steps: ["Tartiner le pain de sauce tomate.", "Ajouter jambon et mozzarella.", "Passer au four.", "Servir quand le fromage fond."],
+        nutrition: { calories: 590, protein: 29, carbs: 60, fat: 25 }
+      }),
+      recipe({
+        id: "gratin-pates-jambon",
+        title: "Gratin de pates au jambon",
+        photo: "auto",
+        time: 25,
+        difficulty: "Tres facile",
+        servings: 5,
+        slots: ["soir"],
+        modes: ["rapide", "economique", "convivial"],
+        cost: 1,
+        ingredients: [ing("pates", 450, "g"), ing("jambon", 220, "g"), ing("creme", 200, "ml"), ing("fromage_rape", 160, "g")],
+        steps: ["Cuire les pates.", "Melanger avec jambon, creme et fromage.", "Mettre dans un plat.", "Gratiner 10 minutes."],
+        nutrition: { calories: 680, protein: 31, carbs: 86, fat: 24 }
+      }),
+      recipe({
+        id: "nuggets-poulet-four",
+        title: "Nuggets de poulet au four",
+        photo: "auto",
+        time: 25,
+        difficulty: "Facile",
+        servings: 4,
+        slots: ["soir"],
+        modes: ["rapide", "sportif", "convivial"],
+        cost: 2,
+        ingredients: [ing("poulet", 600, "g"), ing("oeufs", 2, "piece"), ing("chapelure", 120, "g"), ing("pommes_de_terre", 700, "g")],
+        steps: ["Couper le poulet en morceaux.", "Passer dans oeuf puis chapelure.", "Cuire au four avec pommes de terre.", "Servir bien dore."],
+        nutrition: { calories: 690, protein: 52, carbs: 62, fat: 22 }
+      }),
+      recipe({
+        id: "riz-cantonais-simple",
+        title: "Riz cantonais simple",
+        photo: "auto",
+        time: 20,
+        difficulty: "Tres facile",
+        servings: 4,
+        slots: ["midi", "soir"],
+        modes: ["rapide", "economique"],
+        cost: 1,
+        ingredients: [ing("riz", 320, "g"), ing("oeufs", 3, "piece"), ing("jambon", 160, "g"), ing("petits_pois", 250, "g"), ing("sauce_soja", 35, "ml")],
+        steps: ["Cuire le riz.", "Brouiller les oeufs.", "Ajouter jambon et petits pois.", "Melanger avec sauce soja."],
+        nutrition: { calories: 590, protein: 27, carbs: 86, fat: 14 }
+      }),
+      recipe({
+        id: "salade-pates-thon-concombre",
+        title: "Salade pates thon concombre",
+        photo: "auto",
+        time: 16,
+        difficulty: "Tres facile",
+        servings: 4,
+        slots: ["midi"],
+        modes: ["rapide", "economique", "sportif"],
+        cost: 1,
+        ingredients: [ing("pates", 340, "g"), ing("thon", 2, "boite"), ing("concombre", 1, "piece"), ing("tomate", 3, "piece"), ing("mais", 1, "boite")],
+        steps: ["Cuire et refroidir les pates.", "Ajouter thon, concombre, tomate et mais.", "Assaisonner simplement.", "Garder au frais si possible."],
+        nutrition: { calories: 560, protein: 32, carbs: 78, fat: 12 }
+      }),
+      recipe({
+        id: "tartines-thon-mozza",
+        title: "Tartines thon mozzarella",
+        photo: "auto",
+        time: 12,
+        difficulty: "Tres facile",
+        servings: 4,
+        slots: ["midi", "soir"],
+        modes: ["rapide", "economique"],
+        cost: 1,
+        ingredients: [ing("pain", 8, "tranche"), ing("thon", 2, "boite"), ing("mozzarella", 180, "g"), ing("tomate", 3, "piece")],
+        steps: ["Mettre thon, tomate et mozzarella sur le pain.", "Passer au four quelques minutes.", "Servir chaud.", "Ajouter une salade si besoin."],
+        nutrition: { calories: 540, protein: 34, carbs: 48, fat: 22 }
+      }),
+      recipe({
+        id: "tacos-boeuf-fromage-express",
+        title: "Tacos boeuf fromage express",
+        photo: "auto",
+        time: 18,
+        difficulty: "Tres facile",
+        servings: 4,
+        slots: ["soir"],
+        modes: ["rapide", "sportif", "convivial"],
+        cost: 2,
+        ingredients: [ing("tortillas", 4, "piece"), ing("boeuf", 500, "g"), ing("cheddar", 160, "g"), ing("salade", 120, "g"), ing("tomate", 2, "piece")],
+        steps: ["Cuire le boeuf hache.", "Garnir les tortillas.", "Ajouter cheddar, salade et tomate.", "Rouler et servir."],
+        nutrition: { calories: 700, protein: 43, carbs: 54, fat: 34 }
+      }),
+      recipe({
+        id: "soupe-legumes-minute",
+        title: "Soupe legumes minute",
+        photo: "auto",
+        time: 18,
+        difficulty: "Tres facile",
+        servings: 4,
+        slots: ["soir"],
+        modes: ["rapide", "economique", "vegetarien"],
+        cost: 1,
+        ingredients: [ing("legumes_surgeles", 600, "g"), ing("bouillon", 1, "piece"), ing("creme", 80, "ml"), ing("pain", 4, "tranche"), ing("fromage_rape", 80, "g")],
+        steps: ["Cuire les legumes avec bouillon.", "Mixer avec un peu de creme.", "Faire des tartines fromage.", "Servir ensemble."],
+        nutrition: { calories: 420, protein: 15, carbs: 55, fat: 15 }
+      }),
+      recipe({
+        id: "semoule-poulet-pois-chiches",
+        title: "Semoule poulet pois chiches",
+        photo: "auto",
+        time: 15,
+        difficulty: "Tres facile",
+        servings: 4,
+        slots: ["midi", "soir"],
+        modes: ["rapide", "sportif", "economique"],
+        cost: 1,
+        ingredients: [ing("semoule", 320, "g"), ing("poulet_cuit", 320, "g"), ing("pois_chiches", 1, "boite"), ing("tomates_concassees", 1, "boite")],
+        steps: ["Gonfler la semoule.", "Rechauffer poulet, pois chiches et tomate.", "Melanger ou servir en bol.", "Assaisonner simplement."],
+        nutrition: { calories: 650, protein: 39, carbs: 88, fat: 13 }
+      }),
+      recipe({
+        id: "pates-tomate-mozza",
+        title: "Pates tomate mozzarella",
+        photo: "auto",
+        time: 17,
+        difficulty: "Tres facile",
+        servings: 4,
+        slots: ["midi", "soir"],
+        modes: ["rapide", "economique", "vegetarien"],
+        cost: 1,
+        ingredients: [ing("pates", 360, "g"), ing("sauce_tomate", 260, "g"), ing("mozzarella", 180, "g"), ing("basilic", 1, "bouquet")],
+        steps: ["Cuire les pates.", "Chauffer la sauce tomate.", "Ajouter mozzarella en morceaux.", "Finir avec basilic."],
+        nutrition: { calories: 620, protein: 24, carbs: 86, fat: 20 }
+      }),
+      recipe({
+        id: "pommes-terre-lardons-oeufs",
+        title: "Pommes de terre lardons oeufs",
+        photo: "auto",
+        time: 24,
+        difficulty: "Tres facile",
+        servings: 4,
+        slots: ["soir"],
+        modes: ["rapide", "economique"],
+        cost: 1,
+        ingredients: [ing("pommes_de_terre", 800, "g"), ing("lardons", 180, "g"), ing("oeufs", 4, "piece"), ing("salade", 120, "g")],
+        steps: ["Cuire les pommes de terre en cubes.", "Dorer avec les lardons.", "Ajouter les oeufs au dernier moment.", "Servir avec salade."],
+        nutrition: { calories: 650, protein: 28, carbs: 60, fat: 34 }
+      }),
+      recipe({
+        id: "galette-jambon-fromage-express",
+        title: "Galette jambon fromage express",
+        photo: "auto",
+        time: 12,
+        difficulty: "Tres facile",
+        servings: 4,
+        slots: ["midi", "soir"],
+        modes: ["rapide", "economique", "convivial"],
+        cost: 1,
+        ingredients: [ing("galettes_sarrasin", 4, "piece"), ing("jambon", 4, "tranche"), ing("fromage_rape", 140, "g"), ing("oeufs", 4, "piece")],
+        steps: ["Rechauffer les galettes.", "Ajouter jambon et fromage.", "Casser un oeuf au centre.", "Replier et servir."],
+        nutrition: { calories: 600, protein: 34, carbs: 46, fat: 30 }
+      }),
+      recipe({
+        id: "riz-tomate-thon",
+        title: "Riz tomate thon",
+        photo: "auto",
+        time: 18,
+        difficulty: "Tres facile",
+        servings: 4,
+        slots: ["midi", "soir"],
+        modes: ["rapide", "economique", "sportif"],
+        cost: 1,
+        ingredients: [ing("riz", 320, "g"), ing("thon", 2, "boite"), ing("tomates_concassees", 1, "boite"), ing("mais", 1, "boite")],
+        steps: ["Cuire le riz.", "Rechauffer tomate, thon et mais.", "Melanger.", "Servir en assiettes creuses."],
+        nutrition: { calories: 590, protein: 34, carbs: 88, fat: 10 }
+      }),
+      recipe({
+        id: "salade-composee-familiale",
+        title: "Salade composee familiale",
+        photo: "auto",
+        time: 15,
+        difficulty: "Tres facile",
+        servings: 4,
+        slots: ["midi"],
+        modes: ["rapide", "economique", "equilibre"],
+        cost: 1,
+        ingredients: [ing("salade", 180, "g"), ing("oeufs", 4, "piece"), ing("tomate", 4, "piece"), ing("mais", 1, "boite"), ing("jambon", 160, "g"), ing("concombre", 1, "piece")],
+        steps: ["Cuire les oeufs.", "Couper les legumes et le jambon.", "Mettre tout dans un grand saladier.", "Assaisonner et servir."],
+        nutrition: { calories: 430, protein: 28, carbs: 34, fat: 20 }
       })
     ]);
 
@@ -3136,7 +3446,7 @@
       }
       return `
         <article class="meal-card" data-open-recipe="${item.id}" tabindex="0" role="button" aria-label="Voir ${escapeAttribute(item.title)}">
-          <div class="meal-photo">${imageTag(item.photo, item.title)}</div>
+          <div class="meal-photo">${recipeImage(item)}</div>
           <div class="meal-body">
             <div class="meal-label">${label}</div>
             <div class="meal-title">${escapeHtml(item.title)}</div>
@@ -3195,7 +3505,7 @@
         const leftoverCount = leftoverMatchCount(recipe);
         return `
         <article class="recipe-card ${favorite ? "favorite" : ""} ${refused ? "refused" : ""}">
-          <div class="recipe-photo">${imageTag(recipe.photo, recipe.title)}</div>
+          <div class="recipe-photo">${recipeImage(recipe)}</div>
           <div class="recipe-info">
             <h3>${escapeHtml(recipe.title)}</h3>
             <div class="tag-row">
@@ -3389,6 +3699,8 @@
       document.getElementById("stat-items").textContent = shopping.length;
       document.getElementById("shopping-total").textContent = shopping.length;
       document.getElementById("shopping-done").textContent = done;
+      const saveStatus = document.getElementById("save-status");
+      if (saveStatus) saveStatus.textContent = "OK";
     }
 
     function generatePlan(showMessage) {
@@ -3518,7 +3830,7 @@
       const refused = isRefused(recipe.id);
       document.getElementById("recipe-sheet").innerHTML = `
         <div class="sheet-photo">
-          ${imageTag(recipe.photo, recipe.title)}
+          ${recipeImage(recipe)}
           <button class="close-sheet" type="button" onclick="closeRecipe()" aria-label="Fermer"><i data-lucide="x"></i></button>
         </div>
         <div class="sheet-content">
@@ -3811,6 +4123,89 @@
       return `<img alt="${escapeAttribute(item.name)}" src="data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}">`;
     }
 
+    function recipeImage(recipe) {
+      const theme = recipeTheme(recipe);
+      const titleLines = wrapTitle(recipe.title, 20, 3);
+      const ingredientLabels = recipe.ingredients.slice(0, 3).map(item => getIngredient(item.id).name);
+      const initials = recipe.title.split(" ").filter(Boolean).slice(0, 2).map(word => word[0]).join("").toUpperCase();
+      const titleSvg = titleLines.map((line, index) => `<text x="74" y="${388 + index * 46}" font-family="Arial,sans-serif" font-size="38" font-weight="900" fill="#1f2933">${escapeSvgText(line)}</text>`).join("");
+      const chipsSvg = ingredientLabels.map((label, index) => `
+        <g transform="translate(${74 + index * 248} 520)">
+          <rect width="220" height="52" rx="26" fill="rgba(255,255,255,.82)" stroke="rgba(31,41,51,.10)"/>
+          <text x="110" y="34" text-anchor="middle" font-family="Arial,sans-serif" font-size="20" font-weight="800" fill="#3b3328">${escapeSvgText(label)}</text>
+        </g>
+      `).join("");
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="900" height="620" viewBox="0 0 900 620" role="img" aria-label="${escapeSvgText(recipe.title)}">
+          <defs>
+            <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0%" stop-color="${theme.bg1}"/>
+              <stop offset="100%" stop-color="${theme.bg2}"/>
+            </linearGradient>
+            <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="14" stdDeviation="18" flood-color="#4a331f" flood-opacity=".18"/>
+            </filter>
+          </defs>
+          <rect width="900" height="620" fill="url(#bg)"/>
+          <circle cx="742" cy="112" r="98" fill="rgba(255,255,255,.28)"/>
+          <circle cx="156" cy="180" r="68" fill="rgba(255,255,255,.22)"/>
+          <text x="74" y="90" font-family="Arial,sans-serif" font-size="24" font-weight="900" fill="rgba(31,41,51,.62)">Menu de maman</text>
+          <g filter="url(#shadow)">
+            <ellipse cx="450" cy="246" rx="178" ry="96" fill="#fff8ef"/>
+            <ellipse cx="450" cy="236" rx="132" ry="60" fill="${theme.accent}"/>
+            <circle cx="392" cy="216" r="28" fill="rgba(255,255,255,.78)"/>
+            <circle cx="462" cy="248" r="34" fill="rgba(255,255,255,.58)"/>
+            <circle cx="526" cy="220" r="22" fill="rgba(255,255,255,.62)"/>
+            <text x="450" y="263" text-anchor="middle" font-family="Arial,sans-serif" font-size="72" font-weight="900" fill="#1f2933">${escapeSvgText(initials || "M")}</text>
+          </g>
+          ${titleSvg}
+          ${chipsSvg}
+        </svg>
+      `;
+      return `<img src="data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}" alt="${escapeAttribute(recipe.title)}" loading="lazy">`;
+    }
+
+    function recipeTheme(recipe) {
+      const palettes = [
+        ["#fff1df", "#e6f4ec", "#f6c453"],
+        ["#f7d6c7", "#fff8ef", "#2f855a"],
+        ["#e8f2ff", "#fff1df", "#e4572e"],
+        ["#f2eadf", "#e6f4ec", "#bd3f1e"],
+        ["#fff4e7", "#f5d4cd", "#3465d9"],
+        ["#edf7f0", "#ffe8d5", "#d64545"]
+      ];
+      const palette = palettes[stringHash(recipe.id || recipe.title) % palettes.length];
+      return { bg1: palette[0], bg2: palette[1], accent: palette[2] };
+    }
+
+    function wrapTitle(title, maxLength, maxLines) {
+      const words = String(title || "").split(" ").filter(Boolean);
+      const lines = [];
+      words.forEach(word => {
+        if (!lines.length) {
+          lines.push(word);
+          return;
+        }
+        const current = lines[lines.length - 1] || "";
+        if (`${current} ${word}`.length <= maxLength) {
+          lines[lines.length - 1] = `${current} ${word}`;
+        } else if (lines.length < maxLines) {
+          lines.push(word);
+        } else {
+          lines[lines.length - 1] = `${lines[lines.length - 1].replace(/\.$/, "")}...`;
+        }
+      });
+      return lines.length ? lines.slice(0, maxLines) : ["Recette"];
+    }
+
+    function stringHash(text) {
+      return String(text || "").split("").reduce((hash, char) => ((hash << 5) - hash + char.charCodeAt(0)) >>> 0, 0);
+    }
+
+    function escapeSvgText(text) {
+      return String(text ?? "").replace(/[&<>"]/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[char]));
+    }
+
     function imageTag(src, alt) {
       const fallback = encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="500" height="360" viewBox="0 0 500 360"><rect width="500" height="360" fill="#fff1df"/><circle cx="125" cy="130" r="74" fill="#f3c49a"/><circle cx="290" cy="190" r="112" fill="#dcebd8"/><text x="250" y="188" text-anchor="middle" font-family="Arial,sans-serif" font-size="32" font-weight="800" fill="#754229">Recette</text></svg>`);
       return `<img src="${escapeAttribute(src)}" alt="${escapeAttribute(alt)}" loading="lazy" onerror="this.onerror=null;this.src='data:image/svg+xml;charset=UTF-8,${fallback}'">`;
@@ -3931,6 +4326,8 @@
 
     function saveState() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      const saveStatus = document.getElementById("save-status");
+      if (saveStatus) saveStatus.textContent = "OK";
     }
 
     function loadState() {

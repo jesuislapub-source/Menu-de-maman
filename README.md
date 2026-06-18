@@ -9,6 +9,8 @@ Fonctions incluses :
 - mode cuisine en plein ecran ;
 - filtres de recettes ;
 - partage et masquage des courses cochees.
+- vignettes recettes locales et uniques ;
+- recettes familiales tres simples et rapides.
 
 ## Publication GitHub Pages
 
