@@ -6,6 +6,9 @@ Fonctions incluses :
 - favoris et recettes refusees ;
 - generation avec les ingredients deja disponibles ;
 - installation sur telephone comme une appli.
+- mode cuisine en plein ecran ;
+- filtres de recettes ;
+- partage et masquage des courses cochees.
 
 ## Publication GitHub Pages
 

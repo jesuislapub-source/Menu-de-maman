@@ -355,6 +355,36 @@
       grid-template-columns: 1fr;
       gap: 9px;
     }
+    .filter-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 9px;
+      margin-top: 10px;
+    }
+    .toggle-pill {
+      position: relative;
+      min-height: var(--tap);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 14px;
+      background: var(--paper);
+      color: var(--soft-ink);
+      font-weight: 900;
+    }
+    .toggle-pill input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .toggle-pill:has(input:checked) {
+      color: white;
+      background: var(--green);
+      border-color: transparent;
+    }
     input[type="search"], input[type="text"], select {
       width: 100%;
       min-height: var(--tap);
@@ -509,6 +539,12 @@
       font-size: .92rem;
       line-height: 1.55;
     }
+    .muted-note {
+      color: var(--soft-ink);
+      font-size: .92rem;
+      line-height: 1.45;
+      margin: 0;
+    }
 
     .bottom-nav {
       position: fixed;
@@ -552,6 +588,86 @@
       backdrop-filter: blur(8px);
     }
     .modal.open { display: block; }
+    .cook-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 70;
+      display: none;
+      background: var(--cream);
+      color: var(--ink);
+    }
+    .cook-modal.open { display: block; }
+    .cook-panel {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 12px;
+      padding: 14px;
+    }
+    .cook-header {
+      display: grid;
+      gap: 8px;
+    }
+    .cook-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .cook-title {
+      color: var(--orange-dark);
+      font-size: clamp(1.45rem, 6vw, 3rem);
+      line-height: 1.05;
+    }
+    .progress-track {
+      height: 12px;
+      border-radius: 999px;
+      background: var(--cream-strong);
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: var(--green);
+      transition: width .2s ease;
+    }
+    .cook-step-card {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: white;
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+      align-content: center;
+      box-shadow: var(--shadow);
+    }
+    .cook-step-number {
+      color: var(--green);
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      font-size: .88rem;
+    }
+    .cook-step-text {
+      font-size: clamp(1.55rem, 7vw, 3.8rem);
+      font-weight: 950;
+      line-height: 1.12;
+    }
+    .cook-ingredients {
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+    .cook-ingredients::-webkit-scrollbar { display: none; }
+    .cook-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+    }
     .recipe-sheet {
       position: absolute;
       inset: auto 0 0;
@@ -668,6 +784,7 @@
       }
       .day-card { min-width: 0; flex-basis: auto; }
       .recipe-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .filter-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
       .bottom-nav {
         left: 18px;
         top: 18px;
@@ -681,6 +798,11 @@
         inset: 4vh calc((100vw - min(760px, 94vw)) / 2) auto;
         max-height: 92vh;
         border-radius: 28px;
+      }
+      .cook-panel {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 28px;
       }
       .sheet-photo {
         border-top-left-radius: 28px;
@@ -786,6 +908,19 @@
                 <option value="soir">Diner</option>
               </select>
             </div>
+            <div class="filter-grid">
+              <select id="recipe-filter-mode" aria-label="Filtrer par mode">
+                <option value="all">Tous les modes</option>
+              </select>
+              <select id="recipe-filter-time" aria-label="Filtrer par temps">
+                <option value="all">Tous les temps</option>
+                <option value="15">15 min max</option>
+                <option value="30">30 min max</option>
+                <option value="45">45 min max</option>
+              </select>
+              <label class="toggle-pill"><input type="checkbox" id="recipe-only-favorites"><i data-lucide="heart"></i>Favoris</label>
+              <label class="toggle-pill"><input type="checkbox" id="recipe-show-refused"><i data-lucide="eye"></i>Refusees</label>
+            </div>
           </section>
           <div class="recipe-grid" id="recipe-grid"></div>
         </section>
@@ -802,6 +937,8 @@
             </div>
             <div class="button-row" style="margin-top: 12px;">
               <button class="secondary" type="button" id="copy-shopping"><i data-lucide="copy"></i>Copier</button>
+              <button class="ghost" type="button" id="share-shopping"><i data-lucide="send"></i>Partager</button>
+              <button class="ghost" type="button" id="toggle-hide-checked"><i data-lucide="eye-off"></i>Masquer coches</button>
               <button class="ghost" type="button" id="download-shopping"><i data-lucide="download"></i>Telecharger</button>
             </div>
           </section>
@@ -836,8 +973,17 @@
                 <div class="day-toggle-grid" id="free-days"></div>
               </div>
 
+              <div class="setting-card">
+                <h3>Preferences recettes</h3>
+                <p class="muted-note">Efface les favoris, les recettes refusees et les ingredients deja disponibles.</p>
+                <div class="button-row">
+                  <button class="ghost" type="button" id="reset-preferences"><i data-lucide="rotate-ccw"></i>Remettre a zero</button>
+                </div>
+              </div>
+
               <div class="setting-card install-card">
                 <h3>Installation telephone</h3>
+                <p class="muted-note">Ajoute le site sur l'ecran d'accueil pour l'ouvrir en plein ecran, comme une appli.</p>
                 <div class="button-row">
                   <button class="secondary" type="button" id="install-app"><i data-lucide="smartphone"></i>Installer</button>
                 </div>
@@ -868,6 +1014,10 @@
 
   <div class="modal" id="recipe-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <article class="recipe-sheet" id="recipe-sheet"></article>
+  </div>
+
+  <div class="cook-modal" id="cook-modal" role="dialog" aria-modal="true" aria-labelledby="cook-title">
+    <div class="cook-panel" id="cook-panel"></div>
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -2697,6 +2847,11 @@
       favoriteRecipes: [],
       refusedRecipes: [],
       leftovers: [],
+      hideCheckedShopping: false,
+      recipeFilterMode: "all",
+      recipeFilterTime: "all",
+      recipeOnlyFavorites: false,
+      recipeShowRefused: false,
       view: "week",
       recipeTargetDay: "Lundi",
       recipeTargetSlot: "midi"
@@ -2705,6 +2860,9 @@
     state.view = "week";
     let toastTimer = null;
     let deferredInstallPrompt = null;
+    let activeCookRecipeId = null;
+    let activeCookStep = 0;
+    let wakeLock = null;
 
     document.addEventListener("DOMContentLoaded", () => {
       document.body.dataset.font = state.font;
@@ -2734,10 +2892,32 @@
         state.recipeTargetSlot = event.target.value;
         saveState();
       });
+      document.getElementById("recipe-filter-mode").addEventListener("change", event => {
+        state.recipeFilterMode = event.target.value;
+        saveState();
+        renderRecipes();
+      });
+      document.getElementById("recipe-filter-time").addEventListener("change", event => {
+        state.recipeFilterTime = event.target.value;
+        saveState();
+        renderRecipes();
+      });
+      document.getElementById("recipe-only-favorites").addEventListener("change", event => {
+        state.recipeOnlyFavorites = event.target.checked;
+        saveState();
+        renderRecipes();
+      });
+      document.getElementById("recipe-show-refused").addEventListener("change", event => {
+        state.recipeShowRefused = event.target.checked;
+        saveState();
+        renderRecipes();
+      });
       document.getElementById("copy-shopping").addEventListener("click", copyShoppingList);
+      document.getElementById("share-shopping").addEventListener("click", shareShoppingList);
       document.getElementById("download-shopping").addEventListener("click", downloadShoppingList);
       document.getElementById("copy-drive").addEventListener("click", copyDriveList);
       document.getElementById("uncheck-all").addEventListener("click", uncheckAll);
+      document.getElementById("toggle-hide-checked").addEventListener("click", toggleHideCheckedShopping);
       document.getElementById("shuffle-today").addEventListener("click", replaceToday);
       document.getElementById("copy-week").addEventListener("click", copyWeek);
       document.getElementById("save-leftovers").addEventListener("click", saveLeftoversFromInput);
@@ -2746,6 +2926,7 @@
         if (event.key === "Enter") saveLeftoversFromInput();
       });
       document.getElementById("install-app").addEventListener("click", installApp);
+      document.getElementById("reset-preferences").addEventListener("click", resetPreferences);
       document.getElementById("servings-select").addEventListener("change", event => {
         state.servings = Number(event.target.value);
         state.checked = {};
@@ -2762,12 +2943,14 @@
       });
       document.addEventListener("keydown", event => {
         if (event.key === "Escape") closeRecipe();
+        if (event.key === "Escape") closeCookingMode();
       });
     }
 
     function renderAll() {
       renderModes();
       renderRecipeTargets();
+      renderRecipeFilters();
       renderFontOptions();
       renderFreeDays();
       renderLeftovers();
@@ -2805,6 +2988,15 @@
       state.recipeTargetSlot ||= "midi";
       document.getElementById("recipe-target-day").innerHTML = days.map(day => `<option value="${day}" ${state.recipeTargetDay === day ? "selected" : ""}>${day}</option>`).join("");
       document.getElementById("recipe-target-slot").value = state.recipeTargetSlot;
+    }
+
+    function renderRecipeFilters() {
+      const modeSelect = document.getElementById("recipe-filter-mode");
+      modeSelect.innerHTML = `<option value="all">Tous les modes</option>` + modes.map(mode => `<option value="${mode.id}">${mode.label}</option>`).join("");
+      modeSelect.value = state.recipeFilterMode || "all";
+      document.getElementById("recipe-filter-time").value = state.recipeFilterTime || "all";
+      document.getElementById("recipe-only-favorites").checked = !!state.recipeOnlyFavorites;
+      document.getElementById("recipe-show-refused").checked = !!state.recipeShowRefused;
     }
 
     function renderFontOptions() {
@@ -2876,9 +3068,28 @@
       toast("Restes vides.");
     }
 
+    function resetPreferences() {
+      state.favoriteRecipes = [];
+      state.refusedRecipes = [];
+      state.leftovers = [];
+      state.recipeOnlyFavorites = false;
+      state.recipeShowRefused = false;
+      state.recipeFilterMode = "all";
+      state.recipeFilterTime = "all";
+      saveState();
+      renderLeftovers();
+      renderRecipeFilters();
+      renderRecipes();
+      toast("Preferences remises a zero.");
+    }
+
     function renderSettings() {
       document.getElementById("servings-select").value = String(state.servings);
       document.getElementById("drive-list").innerHTML = driveText().replace(/\n/g, "<br>");
+      document.getElementById("toggle-hide-checked").innerHTML = state.hideCheckedShopping
+        ? `<i data-lucide="eye"></i>Voir coches`
+        : `<i data-lucide="eye-off"></i>Masquer coches`;
+      createIcons();
     }
 
     function renderWeek() {
@@ -2931,6 +3142,7 @@
             <div class="meal-title">${escapeHtml(item.title)}</div>
             <div class="meal-meta">${item.time} min - ${escapeHtml(item.difficulty)} - ${state.servings} pers.</div>
             <div class="meal-actions">
+              <button class="tiny-button" type="button" data-cook-recipe="${item.id}"><i data-lucide="chef-hat"></i>Cuisiner</button>
               <button class="tiny-button" type="button" data-replace="${day}|${slot}"><i data-lucide="refresh-cw"></i>Changer</button>
             </div>
           </div>
@@ -2958,6 +3170,12 @@
           replaceMeal(day, slot);
         });
       });
+      root.querySelectorAll("[data-cook-recipe]").forEach(button => {
+        button.addEventListener("click", event => {
+          event.stopPropagation();
+          openCookingMode(button.dataset.cookRecipe);
+        });
+      });
     }
 
     function renderRecipes() {
@@ -2965,7 +3183,11 @@
       const visible = recipes.filter(recipe => {
         const ingredientText = recipe.ingredients.map(item => getIngredient(item.id).name).join(" ");
         const textMatch = !query || normalize(`${recipe.title} ${recipe.difficulty} ${recipe.modes.join(" ")} ${ingredientText}`).includes(query);
-        return textMatch;
+        const modeMatch = state.recipeFilterMode === "all" || !state.recipeFilterMode || recipe.modes.includes(state.recipeFilterMode);
+        const timeMatch = state.recipeFilterTime === "all" || !state.recipeFilterTime || recipe.time <= Number(state.recipeFilterTime);
+        const favoriteMatch = !state.recipeOnlyFavorites || isFavorite(recipe.id);
+        const refusedMatch = state.recipeShowRefused || !isRefused(recipe.id);
+        return textMatch && modeMatch && timeMatch && favoriteMatch && refusedMatch;
       });
       document.getElementById("recipe-grid").innerHTML = visible.map(recipe => {
         const favorite = isFavorite(recipe.id);
@@ -2990,6 +3212,7 @@
             </div>
             <div class="button-row compact">
               <button class="tiny-button" type="button" data-open-recipe="${recipe.id}">Voir</button>
+              <button class="tiny-button" type="button" data-cook-recipe="${recipe.id}" ${refused ? "disabled" : ""}><i data-lucide="chef-hat"></i>Cuisiner</button>
               <button class="tiny-button" type="button" data-choose-recipe="${recipe.id}" ${refused ? "disabled" : ""}><i data-lucide="plus"></i>Planning</button>
             </div>
           </div>
@@ -3010,6 +3233,12 @@
         element.addEventListener("click", event => {
           event.stopPropagation();
           openRecipe(element.dataset.openRecipe);
+        });
+      });
+      document.querySelectorAll("#recipe-grid [data-cook-recipe]").forEach(button => {
+        button.addEventListener("click", event => {
+          event.stopPropagation();
+          openCookingMode(button.dataset.cookRecipe);
         });
       });
       document.querySelectorAll("#recipe-grid [data-toggle-favorite]").forEach(button => {
@@ -3111,9 +3340,10 @@
 
     function renderShoppingList() {
       const list = aggregateShopping();
-      const grouped = groupBy(list, item => item.category);
+      const visibleList = state.hideCheckedShopping ? list.filter(item => !state.checked[shoppingKey(item)]) : list;
+      const grouped = groupBy(visibleList, item => item.category);
       const container = document.getElementById("shopping-list");
-      container.innerHTML = list.length ? categoryOrder.map(category => {
+      container.innerHTML = visibleList.length ? categoryOrder.map(category => {
         const items = grouped[category] || [];
         if (!items.length) return "";
         return `
@@ -3122,7 +3352,7 @@
             ${items.map(renderShoppingItem).join("")}
           </section>
         `;
-      }).join("") : `<div class="empty-state">Genere une semaine pour voir les courses.</div>`;
+      }).join("") : `<div class="empty-state">${list.length ? "Tous les produits visibles sont coches." : "Genere une semaine pour voir les courses."}</div>`;
       container.querySelectorAll(".check-box").forEach(input => {
         input.addEventListener("change", () => {
           state.checked[input.dataset.key] = input.checked;
@@ -3132,6 +3362,7 @@
         });
       });
       document.getElementById("drive-list").innerHTML = driveText().replace(/\n/g, "<br>");
+      renderSettings();
       renderStats();
     }
 
@@ -3295,6 +3526,7 @@
             <h1 id="modal-title">${escapeHtml(recipe.title)}</h1>
             <p>${modeLabel(state.mode)} - recette prevue pour ${state.servings} personne${state.servings > 1 ? "s" : ""}.</p>
             <div class="button-row compact">
+              <button class="tiny-button" type="button" data-modal-cook="${recipe.id}"><i data-lucide="chef-hat"></i>Cuisiner</button>
               <button class="tiny-button" type="button" data-modal-favorite="${recipe.id}"><i data-lucide="heart"></i>${favorite ? "Favori" : "Ajouter favori"}</button>
               <button class="tiny-button" type="button" data-modal-refused="${recipe.id}"><i data-lucide="thumbs-down"></i>${refused ? "Reautoriser" : "Je n'aime pas"}</button>
             </div>
@@ -3329,6 +3561,10 @@
         </div>
       `;
       document.getElementById("recipe-modal").classList.add("open");
+      document.querySelector("[data-modal-cook]")?.addEventListener("click", event => {
+        event.stopPropagation();
+        openCookingMode(event.currentTarget.dataset.modalCook);
+      });
       document.querySelector("[data-modal-favorite]")?.addEventListener("click", event => {
         event.stopPropagation();
         toggleFavorite(event.currentTarget.dataset.modalFavorite);
@@ -3342,6 +3578,90 @@
 
     function closeRecipe() {
       document.getElementById("recipe-modal").classList.remove("open");
+    }
+
+    async function openCookingMode(id) {
+      const recipe = recipes.find(item => item.id === id);
+      if (!recipe) return;
+      activeCookRecipeId = id;
+      activeCookStep = 0;
+      closeRecipe();
+      document.getElementById("cook-modal").classList.add("open");
+      await requestWakeLock();
+      renderCookingMode();
+    }
+
+    function renderCookingMode() {
+      const recipe = recipes.find(item => item.id === activeCookRecipeId);
+      if (!recipe) return;
+      const multiplier = state.servings / recipe.servings;
+      const total = recipe.steps.length;
+      const step = recipe.steps[activeCookStep] || recipe.steps[0] || "Recette terminee.";
+      const progress = total ? Math.round(((activeCookStep + 1) / total) * 100) : 100;
+      document.getElementById("cook-panel").innerHTML = `
+        <header class="cook-header">
+          <div class="cook-top">
+            <span class="tag green">${recipe.time} min</span>
+            <button class="icon-button" type="button" data-cook-close aria-label="Fermer le mode cuisine"><i data-lucide="x"></i></button>
+          </div>
+          <h1 class="cook-title" id="cook-title">${escapeHtml(recipe.title)}</h1>
+          <div class="progress-track" aria-label="Progression">
+            <div class="progress-bar" style="width:${progress}%"></div>
+          </div>
+          <div class="cook-ingredients">
+            ${recipe.ingredients.map(item => `<span class="choice-chip">${escapeHtml(getIngredient(item.id).name)} ${formatQuantity(item.quantity * multiplier)} ${escapeHtml(item.unit)}</span>`).join("")}
+          </div>
+        </header>
+        <main class="cook-step-card">
+          <div class="cook-step-number">Etape ${Math.min(activeCookStep + 1, total)} / ${total}</div>
+          <div class="cook-step-text">${escapeHtml(step)}</div>
+        </main>
+        <footer class="cook-actions">
+          <button class="ghost" type="button" data-cook-prev ${activeCookStep <= 0 ? "disabled" : ""}><i data-lucide="arrow-left"></i>Avant</button>
+          <button class="primary" type="button" data-cook-next>${activeCookStep >= total - 1 ? `<i data-lucide="check"></i>Terminer` : `Suivant<i data-lucide="arrow-right"></i>`}</button>
+        </footer>
+      `;
+      document.querySelector("[data-cook-close]")?.addEventListener("click", closeCookingMode);
+      document.querySelector("[data-cook-prev]")?.addEventListener("click", () => {
+        activeCookStep = Math.max(0, activeCookStep - 1);
+        renderCookingMode();
+      });
+      document.querySelector("[data-cook-next]")?.addEventListener("click", () => {
+        if (activeCookStep >= total - 1) {
+          closeCookingMode();
+          toast("Recette terminee.");
+          return;
+        }
+        activeCookStep += 1;
+        renderCookingMode();
+      });
+      createIcons();
+    }
+
+    async function closeCookingMode() {
+      document.getElementById("cook-modal").classList.remove("open");
+      activeCookRecipeId = null;
+      activeCookStep = 0;
+      await releaseWakeLock();
+    }
+
+    async function requestWakeLock() {
+      if (!("wakeLock" in navigator)) return;
+      try {
+        wakeLock = await navigator.wakeLock.request("screen");
+      } catch {
+        wakeLock = null;
+      }
+    }
+
+    async function releaseWakeLock() {
+      if (!wakeLock) return;
+      try {
+        await wakeLock.release();
+      } catch {
+        // Ignore browsers that release automatically.
+      }
+      wakeLock = null;
     }
 
     function aggregateShopping() {
@@ -3380,6 +3700,20 @@
 
     async function copyShoppingList() {
       await copyText(shoppingText(), "Liste de courses copiee.");
+    }
+
+    async function shareShoppingList() {
+      const text = shoppingText();
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: "Liste de courses", text });
+          toast("Liste partagee.");
+          return;
+        } catch {
+          return;
+        }
+      }
+      await copyText(text, "Liste copiee pour l'envoyer.");
     }
 
     async function copyDriveList() {
@@ -3425,6 +3759,13 @@
       renderShoppingList();
       renderStats();
       toast("Courses decochees.");
+    }
+
+    function toggleHideCheckedShopping() {
+      state.hideCheckedShopping = !state.hideCheckedShopping;
+      saveState();
+      renderShoppingList();
+      toast(state.hideCheckedShopping ? "Produits coches masques." : "Produits coches visibles.");
     }
 
     function switchView(view, persist = true) {
